@@ -153,6 +153,6 @@ public class DrawingOption implements Parcelable {
   }
 
   public enum DrawingType {
-    POLYGON, POLYLINE, POINT
+    POLYGON, POLYLINE, POINT, CIRCLE
   }
 }

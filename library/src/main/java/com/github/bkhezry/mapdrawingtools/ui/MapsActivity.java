@@ -33,6 +33,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -41,6 +43,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +72,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
   private List<Marker> markerList = new ArrayList<>();
   private Polygon polygon;
   private Polyline polyline;
+  private Circle circle;
   private ReactiveLocationProvider locationProvider;
   private Observable<Location> lastKnownLocationObservable;
   private Observable<Location> locationUpdatesObservable;
@@ -134,6 +138,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
               drawPolygon(points);
             } else if (drawingOption.getDrawingType() == DrawingOption.DrawingType.POLYLINE) {
               drawPolyline(points);
+            } else if (drawingOption.getDrawingType() == DrawingOption.DrawingType.CIRCLE) {
+              drawCircle(points);
             }
           }
         }
@@ -228,14 +234,25 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
         BitmapDescriptor bitmap = BitmapDescriptorFactory.fromBitmap(getBitmapFromDrawable(MapsActivity.this, icon));
         Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).icon(bitmap).draggable(true));
         marker.setTag(latLng);
-        markerList.add(marker);
-        points.add(latLng);
+          if (drawingOption.getDrawingType() == DrawingOption.DrawingType.CIRCLE &&
+                  markerList != null && markerList.size() == 2) {
+                  markerList.remove(1);
+                  points.remove(1);
+                  markerList.add(marker);
+                  points.add(latLng);
+          } else {
+              markerList.add(marker);
+              points.add(latLng);
+          }
         if (drawingOption.getDrawingType() == DrawingOption.DrawingType.POLYGON) {
           drawPolygon(points);
           setAreaLength(points);
         } else if (drawingOption.getDrawingType() == DrawingOption.DrawingType.POLYLINE) {
           drawPolyline(points);
           setLength(points);
+        } else if (drawingOption.getDrawingType() == DrawingOption.DrawingType.CIRCLE) {
+          drawCircle(points);
+          setAreaLength(points);
         }
 
 
@@ -272,6 +289,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
       drawPolyline(points);
       if (calculate)
         setLength(points);
+    } else if (drawingOption.getDrawingType() == DrawingOption.DrawingType.CIRCLE) {
+      drawCircle(points);
+      if (calculate)
+          setAreaLength(points);
     }
   }
 
@@ -296,6 +317,22 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
     polygonOptions.strokeWidth(drawingOption.getStrokeWidth());
     polygonOptions.addAll(latLngList);
     polygon = mMap.addPolygon(polygonOptions);
+  }
+
+  private void drawCircle(List<LatLng> latLngList) {
+    if (circle != null) {
+      circle.remove();
+    }
+
+    LatLng centerLatLng = latLngList.get(0);
+    LatLng perimeterLatLng = latLngList.get(1);
+    CircleOptions circleOptions = new CircleOptions();
+    circleOptions.fillColor(drawingOption.getFillColor());
+    circleOptions.strokeColor(drawingOption.getStrokeColor());
+    circleOptions.strokeWidth(drawingOption.getStrokeWidth());
+    circleOptions.center(new LatLng(centerLatLng.latitude, centerLatLng.longitude));
+    circleOptions.radius(SphericalUtil.computeDistanceBetween(centerLatLng, perimeterLatLng));
+    circle = mMap.addCircle(circleOptions);
   }
 
   @Override
