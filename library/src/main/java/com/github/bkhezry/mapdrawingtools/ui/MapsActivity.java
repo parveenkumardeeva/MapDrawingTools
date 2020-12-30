@@ -252,7 +252,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
           setLength(points);
         } else if (drawingOption.getDrawingType() == DrawingOption.DrawingType.CIRCLE) {
           drawCircle(points);
-          setAreaLength(points);
+          setCircleAreaLength(points);
         }
 
 
@@ -292,7 +292,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
     } else if (drawingOption.getDrawingType() == DrawingOption.DrawingType.CIRCLE) {
       drawCircle(points);
       if (calculate)
-          setAreaLength(points);
+        setCircleAreaLength(points);
     }
   }
 
@@ -324,15 +324,17 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
       circle.remove();
     }
 
-    LatLng centerLatLng = latLngList.get(0);
-    LatLng perimeterLatLng = latLngList.get(1);
-    CircleOptions circleOptions = new CircleOptions();
-    circleOptions.fillColor(drawingOption.getFillColor());
-    circleOptions.strokeColor(drawingOption.getStrokeColor());
-    circleOptions.strokeWidth(drawingOption.getStrokeWidth());
-    circleOptions.center(new LatLng(centerLatLng.latitude, centerLatLng.longitude));
-    circleOptions.radius(SphericalUtil.computeDistanceBetween(centerLatLng, perimeterLatLng));
-    circle = mMap.addCircle(circleOptions);
+    if(latLngList.size() == 2) {
+      LatLng centerLatLng = latLngList.get(0);
+      LatLng perimeterLatLng = latLngList.get(1);
+      CircleOptions circleOptions = new CircleOptions();
+      circleOptions.fillColor(drawingOption.getFillColor());
+      circleOptions.strokeColor(drawingOption.getStrokeColor());
+      circleOptions.strokeWidth(drawingOption.getStrokeWidth());
+      circleOptions.center(new LatLng(centerLatLng.latitude, centerLatLng.longitude));
+      circleOptions.radius(SphericalUtil.computeDistanceBetween(centerLatLng, perimeterLatLng));
+      circle = mMap.addCircle(circleOptions);
+    }
   }
 
   @Override
@@ -466,6 +468,15 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
       setResult(RESULT_CANCELED);
     }
     finish();
+  }
+
+  private void setCircleAreaLength(List<LatLng> points) {
+    if(points.size() == 2) {
+      areaTextView.setText(getString(R.string.area_label) + String.format(Locale.ENGLISH, "%.2f", CalUtils.getCircleArea(points)) + getString(R.string.mm_label));
+    } else {
+      areaTextView.setText(getString(R.string.area_label) + String.format(Locale.ENGLISH, "%.2f", 0 + getString(R.string.mm_label));
+    }
+    lengthTextView.setText(getString(R.string.length_label) + String.format(Locale.ENGLISH, "%.2f", CalUtils.getLength(points)) + getString(R.string.m_label));
   }
 
   private void setAreaLength(List<LatLng> points) {
