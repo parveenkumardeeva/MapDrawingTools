@@ -474,7 +474,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
     if(points.size() == 2) {
       areaTextView.setText(getString(R.string.area_label) + String.format(Locale.ENGLISH, "%.2f", CalUtils.getCircleArea(points)) + getString(R.string.mm_label));
     } else {
-      areaTextView.setText(getString(R.string.area_label) + String.format(Locale.ENGLISH, "%.2f", 0 + getString(R.string.mm_label));
+      areaTextView.setText(getString(R.string.area_label) + String.format(Locale.ENGLISH, "%.2f", 0) + getString(R.string.mm_label));
     }
     lengthTextView.setText(getString(R.string.length_label) + String.format(Locale.ENGLISH, "%.2f", CalUtils.getLength(points)) + getString(R.string.m_label));
   }
