@@ -471,12 +471,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
   }
 
   private void setCircleAreaLength(List<LatLng> points) {
+    double radius = 0.0;
     if(points.size() == 2) {
-      areaTextView.setText(getString(R.string.area_label) + String.format(Locale.ENGLISH, "%.2f", CalUtils.getCircleArea(points)) + getString(R.string.mm_label));
+        radius = CalUtils.getRadius(points);
+      areaTextView.setText(getString(R.string.area_label) + String.format(Locale.ENGLISH, "%.2f", CalUtils.getCircleArea(radius)) + getString(R.string.mm_label));
     } else {
       areaTextView.setText(getString(R.string.area_label) + String.format(Locale.ENGLISH, "%.2f", 0.0) + getString(R.string.mm_label));
     }
-    lengthTextView.setText(getString(R.string.length_label) + String.format(Locale.ENGLISH, "%.2f", CalUtils.getLength(points)) + getString(R.string.m_label));
+    lengthTextView.setText(getString(R.string.radius_label) + String.format(Locale.ENGLISH, "%.2f", radius) + getString(R.string.m_label));
   }
 
   private void setAreaLength(List<LatLng> points) {

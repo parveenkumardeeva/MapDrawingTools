@@ -15,10 +15,19 @@ public class CalUtils {
         return SphericalUtil.computeLength(latLngs);
     }
 
-    public static double getCircleArea(List<LatLng> latLngs) {
+    public static double getRadius(List<LatLng> latLngs) {
         LatLng centerLatLng = latLngs.get(0);
         LatLng perimeterLatLng = latLngs.get(1);
-        double radius = SphericalUtil.computeDistanceBetween(centerLatLng, perimeterLatLng);
+        return SphericalUtil.computeDistanceBetween(centerLatLng, perimeterLatLng);
+    }
+
+    public static double getRadius(LatLng[] latLngs) {
+        LatLng centerLatLng = latLngs[0];
+        LatLng perimeterLatLng = latLngs[1];
+        return SphericalUtil.computeDistanceBetween(centerLatLng, perimeterLatLng);
+    }
+
+    public static double getCircleArea(double radius) {
         return radius * radius * Math.PI;
     }
 
