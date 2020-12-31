@@ -236,10 +236,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
         marker.setTag(latLng);
           if (drawingOption.getDrawingType() == DrawingOption.DrawingType.CIRCLE &&
                   markerList != null && markerList.size() == 2) {
-                  markerList.remove(1);
-                  points.remove(1);
-                  markerList.add(marker);
-                  points.add(latLng);
+
+            Marker oldMarker = markerList.get(markerList.size() - 1);
+            oldMarker.remove();
+            markerList.remove(oldMarker);
+            points.remove(points.size() - 1);
+            markerList.add(marker);
+            points.add(latLng);
           } else {
               markerList.add(marker);
               points.add(latLng);
