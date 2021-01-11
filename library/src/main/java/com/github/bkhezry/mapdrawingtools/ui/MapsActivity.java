@@ -107,9 +107,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
     mapFragment.getMapAsync(this);
     setUpFABs();
     setUpCalculateLayout();
-    initRequestingLocation();
-    if (drawingOption.getRequestGPSEnabling())
+    if (drawingOption.getRequestGPSEnabling()) {
+      initRequestingLocation();
       requestActivatingGPS();
+    }
 
   }
 
