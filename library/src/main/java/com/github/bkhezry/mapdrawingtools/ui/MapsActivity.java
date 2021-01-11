@@ -158,6 +158,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
       @Override
       public void onClick(View v) {
         if (!isGPSOn) {
+          initRequestingLocation();
           requestActivatingGPS();
         } else {
           if (compositeSubscription != null && locationUpdatesObservable != null) {
